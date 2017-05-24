@@ -10,6 +10,27 @@ class ExcelProject(object):
         self.date_cell = 'F2'
         self.count = 0
 
+"""1 : 'BIS',
+                            2 : 'BPMS',
+                            3 : 'Business Data Solutions - MDB',
+                            4 : 'Client Portal' ,
+                            5 : 'Client Portal Mobile - B2B',
+                            6 : 'Content Assistant' ,
+                            7 : 'DexBis' ,
+                            8 : 'Dexnet' ,
+                            9 : 'Distribution' ,
+                            10 : 'DSS Request' ,
+                            11 : 'Enterprise Apps - kGen' ,
+                            12 : 'Enterprise Service Bus' ,
+                            13 : 'Intranet' ,
+                            14 : 'LSAP & PRP' ,
+                            15 : 'Merchant Platform' ,
+                            16 : 'NEMO' ,
+                            17 : 'Proposal Builder' ,
+                            18 : 'Salesforce Platform' ,
+                            19 : 'SEM Estimator Tool' ,
+                            20 : 'Superpages.com' ,
+                            22 : 'Vision' """
         #target sheet initialization
         self.graph_workbook = Workbook(write_only= True)
         self.graph_workbook_sheet = self.graph_workbook.create_sheet()
