@@ -34,7 +34,8 @@ class ExcelProject(object):
                             18 : 'Salesforce Platform' ,
                             19 : 'SEM Estimator Tool' ,
                             20 : 'Superpages.com' ,
-                            22 : 'Vision', 
+                            22 : 'Vision',
+                            23 : 'Wireless',
                             21 : 'VAST'
                         }
 
@@ -50,7 +51,7 @@ class ExcelProject(object):
 
         #initialize the list and append the first row.
         self.rows =[]
-        for i in range(23):
+        for i in range(24):
             self.rows.append([])
         
         #pushing the first row to the list
@@ -71,7 +72,7 @@ class ExcelProject(object):
 
 
     def access_values_dummy(self):
-        for i in range(1,23):
+        for i in range(1,24):
             self.application_name = self.app_dict[i]
             #print ("checking for application: "+ self.application_name)
             self.rows[i].append(self.application_name)
@@ -135,8 +136,8 @@ class ExcelProject(object):
         chart.style = 10
         chart.x_axis.title = 'Applications'
         chart.y_axis.title = 'Inflow_Value'
-        data = Reference(self.graph_workbook_sheet, min_col=2, min_row=1, max_row= 10, max_col=8)
-        cats = Reference(self.graph_workbook_sheet, min_col=1, min_row=2, max_row=10)
+        data = Reference(self.graph_workbook_sheet, min_col=2, min_row=1, max_row= 6, max_col=8)
+        cats = Reference(self.graph_workbook_sheet, min_col=1, min_row=2, max_row=6)
         chart.add_data(data, titles_from_data=True)
         chart.set_categories(cats)
         chart.shape = 6
