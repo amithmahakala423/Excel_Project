@@ -28,34 +28,6 @@ class Scatterplot_wine():
         print (self.wine.corr())
 
 
-    def linear_regression(self):
-        y_bottom = 6
-        y_top = 9
-        y_range = y_top - y_bottom
-
-        plt.ylim(y_bottom, y_top)
-        plt.scatter(wine.AGST, wine.Price) # the actual points
-        plt.plot(x,y, label="Simple linear regression") # the regression line
-
-            # now let's plot the residuals
-        for i in range(0, len(wine)):
-                    # first we need the coordinates of the actual point
-            x_point = wine.AGST[i]
-            y_point = wine.Price[i]
-                    # then we need the say how long is the vertical line
-                    # the vertical line must be between 0 and 1
-            y1 = (y_point - y_bottom) / y_range  # scale
-            y2 = ((0.5 * x_point - 1.25) - y_bottom) / y_range  # scale
-                    # now we can plot the vertical RED residual line
-            plt.axvline(x_point, ymin=y1, ymax=y2, color="red") 
-
-        plt.title("Residualsimple LR")
-        plt.xlabel("Temperature [Celsius degrees]")
-        plt.ylabel("Log of Price")
-        plt.grid()
-        
-        
-
 scatterplot_wine = Scatterplot_wine()
 #finding correlation coefficient
 scatterplot_wine.correlation_coef()
@@ -66,9 +38,6 @@ scatterplot_wine.scatter_against_price('WinterRain','Price', "Shows wine price a
 scatterplot_wine.scatter_against_price('HarvestRain','Price', "Shows wine price according to the HarvestRain", "HarvestRain", "Price")
 scatterplot_wine.scatter_against_price('Age','Price', "Shows wine price according to the Age of wint bottles", "Age", "Price")
 scatterplot_wine.scatter_against_price('Year','Price', "Shows wine price according to year", "Year", "Price")
-
-#
-
 
 
 
