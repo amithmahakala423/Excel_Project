@@ -1,4 +1,5 @@
 import openpyxl
+from configparser import SafeConfigParser
 from openpyxl import load_workbook, Workbook
 from openpyxl.chart import BarChart, Series, Reference
 import datetime
@@ -8,15 +9,21 @@ from datetime import date, timedelta
 
 class ExcelProject(object):
 #########################################################################
-    def __init__(self):    
+    def __init__(self):
+
+        #initializing the configparser
+        excel_parser = SafeConfigParser()
+        excel_parser.read('excel_project.ini')
+
         #creating global_values
-        self.number = 2
-        self.number_aging = 2
-        self.app_cell = 'B2'
-        self.date_cell = 'F2'
-        self.app_aging_cell = 'B2'
-        self.status_aging_cell = 'H2'
-        self.label_aging_cell = 'X2'
+        self.number = int(excel_parser.get('inflow', 'number'))
+        self.app_cell = str(excel_parser.get('inflow', 'app_cell'))
+        self.date_cell = str(excel_parser.get('inflow', 'date_cell'))
+
+        self.number_aging = int(excel_parser.get('aging', 'number_aging'))
+        self.app_aging_cell = str(excel_parser.get('aging', 'app_aging_cell'))
+        self.status_aging_cell = str(excel_parser.get('aging', 'status_aging_cell'))
+        self.label_aging_cell = str(excel_parser.get('aging', 'label_aging_cell'))
         
         self.count = 0
         self.app_dict = {   1 : 'BIS',
