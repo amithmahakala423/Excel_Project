@@ -17,7 +17,7 @@ class ExcelProject(object):
         excel_parser = SafeConfigParser()
         excel_parser.read('excel_project.ini')
 
-        #creating global_values
+        #initializing the variables required
         self.number = int(excel_parser.get('inflow', 'number'))
         self.number_toassign = int(excel_parser.get('inflow', 'number'))
         self.app_cell = str(excel_parser.get('inflow', 'app_cell'))
@@ -57,8 +57,10 @@ class ExcelProject(object):
         print ("Initialising the target sheet")
         self.graph_workbook = Workbook(write_only= True)
         self.graph_workbook_sheet = self.graph_workbook.create_sheet()
+        self.graph_workbook_sheet.title = str(excel_parser.get('inflow','sheet_name'))
         print ("Default sheet name is: "+ str(self.graph_workbook_sheet))
         self.graph_workbook_sheet1 = self.graph_workbook.create_sheet()
+        self.graph_workbook_sheet1.title = str(excel_parser.get('aging','sheet_name'))
         print ("Second sheet name is: "+ str(self.graph_workbook_sheet1))
         print ()
         print ()
@@ -80,22 +82,27 @@ class ExcelProject(object):
             self.rows.append([])
         #pushing the first row to the list
         self.rows[0].append('Row Labels')
-        self.nth = 7
+        self.nth = self.repeat_toassign
         while self.nth > 0:
             self.rows[0].append(date.today() - timedelta(self.nth))
             self.nth -= 1
 
 
+        self.aging_count = 1
         #initializing the list and append the first row for aging values
         self.rows_aging =[]
         for i in range(self.count):
             self.rows_aging.append([])
+
         #pushing the first row to the list
-        self.rows_aging[0].append('Row Labels')
-        self.rows_aging[0].append('> 90 Days')
-        self.rows_aging[0].append('22 - 90 Days')
-        self.rows_aging[0].append('8 - 21 Days')
-        self.rows_aging[0].append('0 - 7 Days')
+        self.aging_field_pre = 'head_column'
+        self.aging_field_suff = self.aging_field_pre + str(self.aging_count)
+        while str(excel_parser.get('aging', self.aging_field_suff)) != '':
+            self.rows_aging[0].append(str(excel_parser.get('aging', self.aging_field_suff)))
+            self.aging_count += 1
+            self.aging_field_suff = self.aging_field_pre + str(self.aging_count)
+        self.aging_count -= 1
+
 #######################################################################
     #function for getting cell values
     def cell_value(self,number):
@@ -104,13 +111,15 @@ class ExcelProject(object):
 
 
     def access_incident_values(self):
+        print ("Starting Inflow Report")
+        print ("Application: ", end = " ")
         for i in range(1,self.count):
             self.application_name = self.app_dict[i]
             #print ("checking for application: "+ self.application_name)
             self.rows[i].append(self.application_name)
             self.repeat = self.repeat_toassign
             self.application_incident_count = 0
-            print ("Starting Application: " + self.application_name)
+            print (str(i), end=" ")
             while self.repeat > 0 :
                 #print ("self.repeat value is:" + str(self.repeat))
                 self.full_date = str(date.today() - timedelta(self.repeat))
@@ -143,11 +152,8 @@ class ExcelProject(object):
                 self.date_cell = self.date_cell_toassign
                 self.app_cell = self.app_cell_toassign
                 self.number = self.number_toassign
-            print ("Finished Application: " + self.application_name)
-            print ()
-            print ()
                 
-        
+        print ("\n\n")
         print (self.rows)
 
 
@@ -155,14 +161,14 @@ class ExcelProject(object):
     def append_incident_values_to_sheet(self):
         for row_values in self.rows:
             self.graph_workbook_sheet.append(row_values)
-        print ("Alvalues got appended to sheet")
+        print ("All values got appended to inflow sheet")
 
 
 
     def draw_incident_inflow_graph(self):
         chart = BarChart()
         chart.type = "col"
-        chart.title = "IR Inflow - Last 7 Days - Top 10 Apps"
+        chart.title = "IR Inflow - Last 7 Days - Top 5 Apps"
         chart.style = 10
         chart.x_axis.title = 'Applications'
         chart.y_axis.title = 'Inflow_Value'
@@ -174,19 +180,25 @@ class ExcelProject(object):
         self.graph_workbook_sheet.add_chart(chart, "K2")    
         #self.graph_workbook.save('final_graph.xlsx')
         #print ("######SUCCESSFUL......GRAPH IS READY######")
+        print("--- %s seconds for inflow---" % (time.time() - self.start_time))
         
         
 #######################################################################
 
     def access_aging_values(self):
+        self.start_time = time.time()
+        print()
+        print()
+        print("Starting Aging report")
+        print ("Application: ", end = " ")
         for i in range(1,self.count):
             self.application_name = self.app_dict[i]
             #print ("checking for application: "+ self.application_name)
             self.rows_aging[i].append(self.application_name)
             self.repeat_aging = 1
             self.application_aging_count = 0
-            print ("Starting Application: " + self.application_name)
-            while self.repeat_aging < 5 :
+            print (str(i), end = " ")
+            while self.repeat_aging < self.aging_count:
                 #print ("self.repeat_aging value is:" + str(self.repeat_aging))
                 #print ("checking for age" + self.rows_aging[0][self.repeat_aging])
                 while True:
@@ -217,12 +229,9 @@ class ExcelProject(object):
                 self.status_aging_cell = self.status_aging_cell_toassign
                 self.app_aging_cell = self.app_aging_cell_toassign
                 self.label_aging_cell = self.label_aging_cell_toassign
-                self.number_aging = 2
-            print ("Finished Application: " + self.application_name)
-            print ()
-            print ()
+                self.number_aging = self.number_aging_toassign
                 
-        
+        print ("\n\n")
         print (self.rows_aging)
 
 
@@ -236,7 +245,7 @@ class ExcelProject(object):
     def append_aging_values_to_sheet(self):
         for row_values in self.rows_aging:
             self.graph_workbook_sheet1.append(row_values)
-        print ("Alvalues got appended to sheet1")
+        print ("Al values got appended to Aging sheet")
 
     def draw_aging_inflow_graph(self):
         chart = BarChart()
@@ -255,7 +264,7 @@ class ExcelProject(object):
         print ("######SUCCESSFUL......GRAPH IS READY######")
         print ()
         print ()
-        print("--- %s seconds ---" % (time.time() - self.start_time))
+        print("--- %s seconds for Aging---" % (time.time() - self.start_time))
 
 ####################################################################
 #Methods to read the incident values and draw a graph for the inflow
